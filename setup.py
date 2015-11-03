@@ -1,0 +1,21 @@
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+config = {
+    'description': 'Pileup',
+    'author': 'B. Arman Aksoy',
+    'url': 'https://github.com/armish/pileup',
+    'download_url': 'https://github.com/armish/pileup/releases',
+    'author_email': 'arman@aksoy.org',
+    'license': 'http://www.apache.org/licenses/LICENSE-2.0.html',
+    'version': '0.0.1',
+    'install_requires': [
+        'nose'],
+    'packages': ['pileup'],
+    'scripts': [],
+    'name': 'pileup'
+}
+
+setup(**config)
