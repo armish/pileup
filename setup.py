@@ -12,7 +12,10 @@ config = {
     'license': 'http://www.apache.org/licenses/LICENSE-2.0.html',
     'version': '0.0.1',
     'install_requires': [
-        'nose'],
+        'nose>=1.3.7',
+        'urwid>=1.3.1',
+        'twobitreader>=3.1.0',
+        'pysam>=0.8.3'],
     'packages': ['pileup'],
     'scripts': [],
     'name': 'pileup'
