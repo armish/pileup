@@ -4,6 +4,10 @@ from optparse import OptionParser
 from twobitreader import TwoBitFile
 import urwid
 
+from .range import Range
+from .pileup import Pileup
+from .track import ReferenceTrack, DivTrack
+
 def _get_args():
     parser = OptionParser()
     parser.add_option("-t", "--twobit", dest="twobit",
@@ -20,17 +24,19 @@ def _parse_range(rangeStr):
     (chromosome, location) = rangeStr.split(":")
     (start, end) = location.split("-")
 
-    return chromosome, int(start), int(end)
+    return Range(chromosome, int(start), int(end))
 
 def main():
     (options, args) = _get_args()
-    reference = TwoBitFile(options.twobit)
-    (chromosome, start, end) = _parse_range(options.range)
+    twoBitFile = TwoBitFile(options.twobit)
 
-    txt = urwid.Text(reference[chromosome][start-1:end])
-    fill = urwid.Filler(txt, 'top')
-    loop = urwid.MainLoop(fill)
-    loop.run()
+    pileup = Pileup(region=_parse_range(options.range))
+    pileup.addTrack(ReferenceTrack(twoBitFile))
+    pileup.addTrack(DivTrack(divider='-'))
+    pileup.addTrack(DivTrack(divider='~'))
+    pileup.addTrack(DivTrack(divider='.'))
+
+    pileup.render()
 
 if __name__ == '__main__':
     main()
