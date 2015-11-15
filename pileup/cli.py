@@ -31,10 +31,10 @@ def main():
     twoBitFile = TwoBitFile(options.twobit)
 
     pileup = Pileup(region=_parse_range(options.range))
-    pileup.addTrack(ReferenceTrack(twoBitFile))
-    pileup.addTrack(DivTrack(divider='-'))
-    pileup.addTrack(DivTrack(divider='~'))
-    pileup.addTrack(DivTrack(divider='.'))
+    pileup.addTrack(ReferenceTrack(twoBitFile, name="Reference"))
+    pileup.addTrack(DivTrack(divider='-', name="Div1"))
+    pileup.addTrack(DivTrack(divider='~', name="Div2"))
+    pileup.addTrack(DivTrack(divider='.', name="Div3"))
 
     pileup.render()
 
