@@ -3,10 +3,11 @@ import pileup
 from optparse import OptionParser
 from twobitreader import TwoBitFile
 import urwid
+import vcf
 
 from .range import Range
 from .pileup import Pileup
-from .track import ReferenceTrack, DivTrack
+from .track import ReferenceTrack, DivTrack, VCFTrack
 
 def _get_args():
     parser = OptionParser()
@@ -32,7 +33,14 @@ def main():
 
     pileup = Pileup(region=_parse_range(options.range))
     pileup.addTrack(ReferenceTrack(twoBitFile, name="Reference"))
-    pileup.addTrack(DivTrack(divider='-', name="Div1"))
+
+    for filename in args:
+        if filename.endswith('.vcf'):
+            pileup.addTrack(DivTrack(divider='-', name="Div1"))
+            vcf_reader = vcf.Reader(open(filename, 'r'))
+            variants = list(vcf_reader)
+            pileup.addTrack(VCFTrack(variants=variants, name="Variants"))
+
     pileup.addTrack(DivTrack(divider='~', name="Div2"))
     pileup.addTrack(DivTrack(divider='.', name="Div3"))
 

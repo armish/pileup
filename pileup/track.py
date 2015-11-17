@@ -37,6 +37,40 @@ class TrackLabel(Track):
         txt = urwid.Text(('bold', labelTxt), 'right', 'clip')
         return txt
 
+class VCFTrack(Track):
+    variants = []
+    palette = [('variant', 'dark cyan', 'dark cyan')]
+
+    def __init__(self, variants, width=0, height=0, name=''):
+        super(VCFTrack, self).__init__(width, height, name)
+        self.variants = variants
+
+    def filterVariants(self, region):
+        (chromosome, start, end) = region.explode()
+        chromosome = chromosome.replace('chr', '')
+        fvars = filter(lambda v: v.CHROM == chromosome and
+                                 (v.POS >= start and v.POS <= end),
+                       self.variants)
+        mfvars = {v.POS:v for v in fvars}
+        return mfvars
+
+    def render(self, region):
+        visVariants = self.filterVariants(region)
+        (_, start, end) = region.explode()
+
+        variantBars = []
+        singlePosEl = urwid.Text(' ')
+
+        for pos in range(start, end):
+            variant = visVariants.get(pos)
+            if not variant:
+                variantBars.append(singlePosEl)
+            else:
+                variantBars.append(urwid.AttrMap(singlePosEl, 'variant'))
+
+        cols = urwid.Columns(variantBars)
+        return cols
+
 class DivTrack(Track):
     divider = '-'
 

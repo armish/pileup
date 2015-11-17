@@ -54,6 +54,5 @@ class Pileup(object):
         pile = urwid.Pile(renderedTracks)
         fill = urwid.Filler(pile, 'top')
         loop.widget = fill
-        print(self.palette)
         loop.screen.register_palette(self.palette)
         loop.run()
