@@ -29,19 +29,23 @@ class Pileup(object):
     def exit_on_q(self, key):
         if key in ('q', 'Q'):
             raise urwid.ExitMainLoop()
+        elif key is 'left':
+            (chromosome, start, end) = self.region.explode()
+            self.setRegion(Range(chromosome, start - 1, end - 1))
+            self._render()
+        elif key is 'right':
+            (chromosome, start, end) = self.region.explode()
+            self.setRegion(Range(chromosome, start + 1, end + 1))
+            self._render()
 
-    def render(self):
-        placeholder = urwid.SolidFill()  # For calculations
-        loop = urwid.MainLoop(placeholder,
-                              self.palette,
-                              unhandled_input=self.exit_on_q)
-        loop.screen.set_terminal_properties(colors=16)
+    def _render(self):
+        loop = self.loop
         width, height = loop.screen.get_cols_rows()
 
         lw = self.labelWidth  # label width
         tw = width - lw  # track width
         adjustedRegion = self.adjustRegion(tw)
-        
+
         renderedTracks = []
         for track in self.tracks:
             label = TrackLabel(track.name)
@@ -56,4 +60,13 @@ class Pileup(object):
         fill = urwid.Filler(pile, 'top')
         loop.widget = fill
         loop.screen.register_palette(self.palette)
+
+    def render(self):
+        placeholder = urwid.SolidFill()  # For calculations
+        loop = urwid.MainLoop(placeholder,
+                              self.palette,
+                              unhandled_input=self.exit_on_q)
+        loop.screen.set_terminal_properties(colors=16)
+        self.loop = loop
+        self._render()
         loop.run()
