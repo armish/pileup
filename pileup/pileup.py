@@ -38,9 +38,10 @@ class Pileup(object):
         loop.screen.set_terminal_properties(colors=16)
         width, height = loop.screen.get_cols_rows()
 
-        adjustedRegion = self.adjustRegion(width)
         lw = self.labelWidth  # label width
         tw = width - lw  # track width
+        adjustedRegion = self.adjustRegion(tw)
+        
         renderedTracks = []
         for track in self.tracks:
             label = TrackLabel(track.name)

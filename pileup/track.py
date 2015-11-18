@@ -1,4 +1,5 @@
 import urwid
+import locale
 
 class Track(object):
     width = 0
@@ -23,6 +24,14 @@ class Track(object):
 
     def getPalette(self):
         return self.palette
+
+    def centerBase(self, region):
+        (_, start, end) = region.explode()
+        midPoint = (start + end) / 2
+        return midPoint
+
+    def formatPosition(self, position):
+        return locale.format("%d", position, grouping=True)
 
 class TrackLabel(Track):
     label = None
@@ -81,6 +90,33 @@ class DivTrack(Track):
     def render(self, region):
         div = urwid.Divider(self.divider)
         return div
+
+class ScaleTrack(Track):
+    def render(self, region):
+        _, start, end = region.explode()
+        centerBase = self.centerBase(region)
+
+        scaleTxt = " %s bps " % self.formatPosition(end - start)
+        txtLen = len(scaleTxt)
+        scaleEl = urwid.Text(scaleTxt)
+        leftArrow = urwid.Text("<")
+        filler = urwid.Divider("-")
+        rightArrow = urwid.Text(">")
+
+        return urwid.Columns([(1, leftArrow),
+                              (centerBase - start - (txtLen / 2) - 1, filler),
+                              (txtLen, scaleEl),
+                              (end - centerBase - (txtLen / 2) - 1, filler),
+                              (1, rightArrow)])
+
+class LocationTrack(Track):
+    def render(self, region):
+        _, start, end = region.explode()
+        centerBase = self.centerBase(region)
+        locTxt = "|- %s bp" % self.formatPosition(centerBase)
+        locEl = urwid.Text(locTxt)
+        filler = urwid.Divider(" ")
+        return urwid.Columns([(centerBase - start, filler), locEl, filler])
 
 class ReferenceTrack(Track):
     twoBitFile = None

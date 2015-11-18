@@ -7,7 +7,7 @@ import vcf
 
 from .range import Range
 from .pileup import Pileup
-from .track import ReferenceTrack, DivTrack, VCFTrack
+from .track import ReferenceTrack, DivTrack, VCFTrack, LocationTrack, ScaleTrack
 
 def _get_args():
     parser = OptionParser()
@@ -32,6 +32,8 @@ def main():
     twoBitFile = TwoBitFile(options.twobit)
 
     pileup = Pileup(region=_parse_range(options.range))
+    pileup.addTrack(ScaleTrack(name="Scale"))
+    pileup.addTrack(LocationTrack(name="Location"))
     pileup.addTrack(ReferenceTrack(twoBitFile, name="Reference"))
 
     for filename in args:
